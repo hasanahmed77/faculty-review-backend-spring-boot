@@ -21,11 +21,10 @@ public class Professor {
     private List<String> reviews;
     private String university;
 
-    // Default constructor
+    // constructors
     public Professor() {
     }
 
-    // Constructor to initialize user details
     public Professor(String name, String dept, String initial, int rating, boolean takeAgain, String difficulty,
             String courseName, List<String> reviews, String university) {
         this.name = name;
@@ -39,7 +38,7 @@ public class Professor {
         this.university = university;
     }
 
-    // Getters and Setters
+    // getters & setters
     public String getId() {
         return id;
     }
@@ -119,11 +118,4 @@ public class Professor {
     public void setUniversity(String university) {
         this.university = university;
     }
-
-    // public void addAReview(String review) {
-    // if (this.reviews == null)
-    // this.reviews = new ArrayList<>();
-
-    // this.reviews.add(review);
-    // }
 }

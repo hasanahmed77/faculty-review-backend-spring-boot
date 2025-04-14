@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.whichprof.whichprof.exceptions.InvalidProfessorID;
 import com.whichprof.whichprof.model.Professor;
 import com.whichprof.whichprof.service.ProfessorService;
 
@@ -24,24 +27,38 @@ public class ProfessorController {
     @Autowired
     private ProfessorService professorService;
 
+    @ExceptionHandler(InvalidProfessorID.class)
+    public ResponseEntity<String> handleInvalidProfessorID(InvalidProfessorID exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
+
     @PostMapping
-    public Professor createProfessor(@RequestBody Professor professor) {
-        return professorService.saveProfessor(professor);
+    public ResponseEntity<Professor> createProfessor(@RequestBody Professor professor) {
+        Professor createdProfessor = professorService.saveProfessor(professor);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProfessor);
     }
 
     @GetMapping
-    public List<Professor> getProfessors() {
-        return professorService.getAllProfessors();
+    public ResponseEntity<List<Professor>> getProfessors() {
+        List<Professor> professors = professorService.getAllProfessors();
+        return ResponseEntity.ok(professors);
     }
 
     @GetMapping("/{id}")
-    public Optional<Professor> getProfessorById(@PathVariable String id) {
-        return professorService.getProfessorById(id);
+    public ResponseEntity<Professor> getProfessorById(@PathVariable String id) {
+        Optional<Professor> professor = professorService.getProfessorById(id);
+        return professor.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProfessor(@PathVariable String id) {
-        professorService.deleteProfessor(id);
+    public ResponseEntity<Void> deleteProfessor(@PathVariable String id) {
+        try {
+            professorService.deleteProfessor(id);
+            return ResponseEntity.noContent().build();
+        } catch (InvalidProfessorID e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/name/{name}")
@@ -49,28 +66,11 @@ public class ProfessorController {
         return professorService.getProfessorByName(name);
     }
 
-    @PatchMapping("/{id}/reviews")
-    public ResponseEntity<Professor> updateProfessorReviews(
-            @PathVariable String id,
-            @RequestBody List<String> newReviews) {
-
-        Optional<Professor> optionalProfessor = professorService.getProfessorById(id);
-        if (optionalProfessor.isPresent()) {
-            Professor professor = optionalProfessor.get();
-            List<String> existingReviews = professor.getReviews();
-            existingReviews.addAll(newReviews); // Append reviews
-            professor.setReviews(existingReviews);
-            professorService.saveProfessor(professor);
-            return ResponseEntity.ok(professor);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patchProfessor(@PathVariable String id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<Professor> patchProfessor(@PathVariable String id, @RequestBody Map<String, Object> updates) {
         return professorService.patchProfessor(id, updates)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 }

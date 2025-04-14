@@ -54,12 +54,11 @@ public class ProfessorService {
         Optional<Professor> optionalProfessor = professorRepository.findById(id);
 
         if (optionalProfessor.isEmpty()) {
-            return Optional.empty(); // Professor not found
+            return Optional.empty();
         }
 
         Professor professor = optionalProfessor.get();
 
-        // Iterate over the updates and apply changes to the professor object
         updates.forEach((key, value) -> {
             switch (key) {
                 case "name":
@@ -93,11 +92,9 @@ public class ProfessorService {
                 case "university":
                     professor.setUniversity((String) value);
                     break;
-                // Optionally: skip unknown fields or log errors
             }
         });
 
-        // Save the updated professor object
         return Optional.of(professorRepository.save(professor));
     }
 
