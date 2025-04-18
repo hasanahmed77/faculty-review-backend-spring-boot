@@ -33,7 +33,7 @@ public class ProfessorController {
 
     @GetMapping
     public ResponseEntity<List<Professor>> getProfessors() {
-        List<Professor> professors = professorService.getAllProfessors();
+        List<Professor> professors = professorService.getAllProfessorsSortedByCreatedAt();
         return ResponseEntity.ok(professors);
     }
 
@@ -66,7 +66,6 @@ public class ProfessorController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Updated to accept List<Review> instead of List<Map<String, Object>>
     @PostMapping("/reviews/{id}")
     public ResponseEntity<Professor> addReviews(@PathVariable String id, @RequestBody List<Review> newReviews) {
         Professor updatedProfessor = professorService.appendProfessorReviews(id, newReviews);

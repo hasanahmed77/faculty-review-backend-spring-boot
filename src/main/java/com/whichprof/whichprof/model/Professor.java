@@ -1,8 +1,10 @@
 package com.whichprof.whichprof.model;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.List;
 
 @Document("professor")
@@ -14,26 +16,23 @@ public class Professor {
     private String name;
     private String dept;
     private String initial;
-    private int rating;
-    private boolean takeAgain;
-    private String difficulty;
     private String courseName;
-    private List<Review> reviews; // Change to List<Review>
+    private List<Review> reviews;
     private String university;
+
+    @CreatedDate
+    private Date createdAt;
 
     // constructors
     public Professor() {
     }
 
-    public Professor(String name, String dept, String initial, int rating, boolean takeAgain, String difficulty,
-            String courseName, List<Review> reviews, String university) { // Change List<Map<String, Object>> to
-                                                                          // List<Review>
+    public Professor(String name, String dept, String initial,
+            String courseName, List<Review> reviews, String university) {
+
         this.name = name;
         this.dept = dept;
         this.initial = initial;
-        this.rating = rating;
-        this.takeAgain = takeAgain;
-        this.difficulty = difficulty;
         this.courseName = courseName;
         this.reviews = reviews;
         this.university = university;
@@ -70,30 +69,6 @@ public class Professor {
 
     public void setInitial(String initial) {
         this.initial = initial;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public boolean isTakeAgain() {
-        return takeAgain;
-    }
-
-    public void setTakeAgain(boolean takeAgain) {
-        this.takeAgain = takeAgain;
-    }
-
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(String difficulty) {
-        this.difficulty = difficulty;
     }
 
     public String getCourseName() {

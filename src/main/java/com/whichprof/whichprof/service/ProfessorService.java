@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.whichprof.whichprof.repository.ProfessorRepository;
@@ -21,8 +22,9 @@ public class ProfessorService {
         return professorRepository.save(professor);
     }
 
-    public List<Professor> getAllProfessors() {
-        return professorRepository.findAll();
+    // Updated to return professors sorted by createdAt (descending)
+    public List<Professor> getAllProfessorsSortedByCreatedAt() {
+        return professorRepository.findAll(Sort.by(Sort.Order.desc("createdAt")));
     }
 
     public Optional<Professor> getProfessorById(String id) {
@@ -70,15 +72,6 @@ public class ProfessorService {
                     break;
                 case "initial":
                     professor.setInitial((String) value);
-                    break;
-                case "rating":
-                    professor.setRating((Integer) value);
-                    break;
-                case "takeAgain":
-                    professor.setTakeAgain((Boolean) value);
-                    break;
-                case "difficulty":
-                    professor.setDifficulty((String) value);
                     break;
                 case "courseName":
                     professor.setCourseName((String) value);
