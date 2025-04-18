@@ -18,7 +18,7 @@ public class Professor {
     private boolean takeAgain;
     private String difficulty;
     private String courseName;
-    private List<String> reviews;
+    private List<Review> reviews; // Change to List<Review>
     private String university;
 
     // constructors
@@ -26,7 +26,8 @@ public class Professor {
     }
 
     public Professor(String name, String dept, String initial, int rating, boolean takeAgain, String difficulty,
-            String courseName, List<String> reviews, String university) {
+            String courseName, List<Review> reviews, String university) { // Change List<Map<String, Object>> to
+                                                                          // List<Review>
         this.name = name;
         this.dept = dept;
         this.initial = initial;
@@ -103,11 +104,11 @@ public class Professor {
         this.courseName = courseName;
     }
 
-    public List<String> getReviews() {
+    public List<Review> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<String> reviews) {
+    public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
 

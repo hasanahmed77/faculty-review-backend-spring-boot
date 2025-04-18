@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.whichprof.whichprof.repository.ProfessorRepository;
 import com.whichprof.whichprof.exceptions.InvalidProfessorID;
 import com.whichprof.whichprof.model.Professor;
+import com.whichprof.whichprof.model.Review; // Make sure to import the Review model
 
 @Service
 public class ProfessorService {
@@ -36,20 +37,20 @@ public class ProfessorService {
         return professorRepository.findByName(name);
     }
 
-    public Professor appendProfessorReviews(String id, List<String> newReviews) {
+    // Update to use List<Review> instead of List<Map<String, Object>>
+    public Professor appendProfessorReviews(String id, List<Review> newReviews) {
         Optional<Professor> optionalProfessor = professorRepository.findById(id);
 
         if (optionalProfessor.isPresent()) {
             Professor professor = optionalProfessor.get();
-            List<String> currentReviews = professor.getReviews();
-            currentReviews.addAll(newReviews);
-            professor.setReviews(currentReviews);
+            professor.getReviews().addAll(newReviews);
             return professorRepository.save(professor);
         } else {
             throw new InvalidProfessorID("Professor not found with id: " + id);
         }
     }
 
+    // Update to use List<Review> instead of List<Map<String, Object>>
     public Optional<Professor> patchProfessor(String id, Map<String, Object> updates) {
         Optional<Professor> optionalProfessor = professorRepository.findById(id);
 
@@ -85,7 +86,7 @@ public class ProfessorService {
                 case "reviews":
                     if (value instanceof List<?>) {
                         @SuppressWarnings("unchecked")
-                        List<String> reviews = (List<String>) value;
+                        List<Review> reviews = (List<Review>) value; // Change to List<Review>
                         professor.setReviews(reviews);
                     }
                     break;
@@ -97,5 +98,4 @@ public class ProfessorService {
 
         return Optional.of(professorRepository.save(professor));
     }
-
 }

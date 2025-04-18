@@ -7,18 +7,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.whichprof.whichprof.exceptions.InvalidProfessorID;
 import com.whichprof.whichprof.model.Professor;
+import com.whichprof.whichprof.model.Review; // Import the Review model
 import com.whichprof.whichprof.service.ProfessorService;
 
 @RestController
@@ -73,4 +66,10 @@ public class ProfessorController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // Updated to accept List<Review> instead of List<Map<String, Object>>
+    @PostMapping("/reviews/{id}")
+    public ResponseEntity<Professor> addReviews(@PathVariable String id, @RequestBody List<Review> newReviews) {
+        Professor updatedProfessor = professorService.appendProfessorReviews(id, newReviews);
+        return ResponseEntity.ok(updatedProfessor);
+    }
 }
