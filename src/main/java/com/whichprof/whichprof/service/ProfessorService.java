@@ -45,7 +45,7 @@ public class ProfessorService {
 
         if (optionalProfessor.isPresent()) {
             Professor professor = optionalProfessor.get();
-            professor.getReviews().addAll(newReviews);
+            professor.getReviews().addAll(0, newReviews);
             return professorRepository.save(professor);
         } else {
             throw new InvalidProfessorID("Professor not found with id: " + id);
