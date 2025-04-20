@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,17 @@ public class ProfessorService {
     @Autowired
     private ProfessorRepository professorRepository;
 
+    public void bulkInsertProfessors(List<Professor> professors) {
+        // Use saveAll method of MongoRepository for bulk insert
+        professorRepository.saveAll(professors);
+    }
+
     public Professor saveProfessor(Professor professor) {
         return professorRepository.save(professor);
+    }
+
+    public Page<Professor> getProfessors(Pageable pageable) {
+        return professorRepository.findAll(pageable);
     }
 
     // Updated to return professors sorted by createdAt (descending)

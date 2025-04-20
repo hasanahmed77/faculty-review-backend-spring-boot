@@ -5,24 +5,34 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.whichprof.whichprof.exceptions.InvalidProfessorID;
 import com.whichprof.whichprof.model.Professor;
-import com.whichprof.whichprof.model.Review; // Import the Review model
+import com.whichprof.whichprof.model.Review;
 import com.whichprof.whichprof.service.ProfessorService;
 
 @RestController
 @RequestMapping("/professors")
 public class ProfessorController {
+
     @Autowired
     private ProfessorService professorService;
 
     @ExceptionHandler(InvalidProfessorID.class)
     public ResponseEntity<String> handleInvalidProfessorID(InvalidProfessorID exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<String> bulkInsertProfessors(@RequestBody List<Professor> professors) {
+        professorService.bulkInsertProfessors(professors);
+        return ResponseEntity.ok("Bulk insert successful");
     }
 
     @PostMapping
@@ -32,9 +42,14 @@ public class ProfessorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Professor>> getProfessors() {
-        List<Professor> professors = professorService.getAllProfessorsSortedByCreatedAt();
-        return ResponseEntity.ok(professors);
+    public ResponseEntity<Page<Professor>> getProfessors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size); // Create Pageable object
+        Page<Professor> professors = professorService.getProfessors(pageable); // Call the service method
+
+        return ResponseEntity.ok(professors); // Return the paginated result
     }
 
     @GetMapping("/{id}")
